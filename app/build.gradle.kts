@@ -66,4 +66,20 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.5.0")
+
+    // Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
+
+    // Moshi
+    implementation ("com.squareup.moshi:moshi:1.15.1")
+    implementation ("com.squareup.moshi:moshi-kotlin:1.15.1")
+    implementation ("com.squareup.retrofit2:converter-moshi:2.11.0")
+
+    // Coil
+    implementation ("io.coil-kt:coil-compose:2.2.2")
+    implementation("io.coil-kt:coil:2.2.2")
+
 }
