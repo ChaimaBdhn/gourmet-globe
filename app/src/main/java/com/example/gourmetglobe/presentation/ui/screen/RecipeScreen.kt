@@ -11,14 +11,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gourmetglobe.presentation.viewmodel.RecipeViewModel
 import com.example.gourmetglobe.data.model.Recipe
+import com.example.gourmetglobe.data.model.RecipeService.api
+import com.example.gourmetglobe.data.repository.RecipeRepositoryImpl
+import com.example.gourmetglobe.domain.repository.repository.RecipeRepository
+import com.example.gourmetglobe.presentation.viewmodel.RecipeViewModelFactory
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipeScreen(rvm: RecipeViewModel = viewModel()) {
-    val recipes = rvm.recipes.value
-    val isLoading = rvm.isLoading.value
-    val error = rvm.error.value
+fun RecipeScreen() {
+
+    val recipeRepository: RecipeRepository = RecipeRepositoryImpl(api)
+
+    // Créer une instance de ViewModel avec RecipeViewModelFactory
+    val viewModel: RecipeViewModel = viewModel(
+        factory = RecipeViewModelFactory(recipeRepository)
+    )
+
+    val recipes = viewModel.recipes.value
+    val isLoading = viewModel.isLoading.value
+    val error = viewModel.error.value
 
     // Exemple de paramètres que tu veux passer
     val cuisine = "Italian"
@@ -26,7 +38,7 @@ fun RecipeScreen(rvm: RecipeViewModel = viewModel()) {
     val number = 10
 
     LaunchedEffect(Unit) {
-        rvm.getRecipes(cuisine, diet, number)
+        viewModel.getRecipes(cuisine, diet, number)
     }
 
     Scaffold(

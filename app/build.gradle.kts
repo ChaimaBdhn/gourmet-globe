@@ -82,7 +82,5 @@ dependencies {
     implementation ("io.coil-kt:coil-compose:2.2.2")
     implementation("io.coil-kt:coil:2.2.2")
 
-    // ImageMap for interactive map
-    implementation("com.cocoahero.android:imagemap:1.0.0")
 
 }

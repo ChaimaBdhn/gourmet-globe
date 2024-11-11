@@ -9,7 +9,7 @@ class RecipeRepositoryImpl(
 ) : RecipeRepository {
 
     override suspend fun getRecipes(cuisine: String, diet: String, number: Int): List<Recipe> {
-        val response = api.getRecipes(cuisine, diet, number, "YOUR_API_KEY")
+        val response = api.getRecipes(cuisine, diet, number, "dfb061e309024285862277fff5f1028a")
         return response.results
     }
 }

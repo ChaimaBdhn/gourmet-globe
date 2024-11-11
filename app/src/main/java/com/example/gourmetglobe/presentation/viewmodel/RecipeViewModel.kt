@@ -1,5 +1,6 @@
 package com.example.gourmetglobe.presentation.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +22,8 @@ class RecipeViewModel(
     private val _error = mutableStateOf<String?>(null)
     val error: State<String?> = _error
 
+
+
     // Méthode pour récupérer les recettes en fonction des paramètres
     fun getRecipes(cuisine: String, diet: String, number: Int) {
         _isLoading.value = true
@@ -29,8 +32,10 @@ class RecipeViewModel(
             try {
                 // Appel à la méthode du repository avec les paramètres dynamiques
                 _recipes.value = repository.getRecipes(cuisine, diet, number)
+                Log.d("RecipeViewModel", "Fetched recipes: ${_recipes.value.size}")
             } catch (e: Exception) {
                 _error.value = "Erreur lors du chargement des recettes"
+                Log.e("RecipeViewModel", "Error fetching recipes", e)
             } finally {
                 _isLoading.value = false
             }
