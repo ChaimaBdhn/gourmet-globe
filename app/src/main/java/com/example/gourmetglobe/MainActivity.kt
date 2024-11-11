@@ -16,9 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             GourmetGlobeTheme {
-                // Utiliser un Surface pour appliquer le thème global
                 Surface(modifier = androidx.compose.ui.Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    // Afficher l'écran des recettes
                     RecipeScreen()
                 }
             }

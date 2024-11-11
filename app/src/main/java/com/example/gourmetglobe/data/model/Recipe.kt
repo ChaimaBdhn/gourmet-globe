@@ -7,8 +7,8 @@ data class Recipe(
     val id: Int,
     val title: String,
     val image: String,
-//    val vegan: Boolean,
-//    val vegetarian: Boolean,
+//    val vegan: Boolean? = null,
+//    val vegetarian: Boolean? = null,
 //
 //    @Json(name = "cookingMinutes") val cookingTime: Int,
 //    @Json(name = "preparationMinutes") val preparationTime: Int,

@@ -10,12 +10,12 @@ object RecipeService {
 
     val api: RecipeApi by lazy {
         val moshi = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())  // Ajoute le support des classes Kotlin
+            .add(KotlinJsonAdapterFactory())
             .build()
 
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))  // Utilisation du Moshi personnalisé
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(RecipeApi::class.java)
     }

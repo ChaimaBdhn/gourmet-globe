@@ -23,7 +23,6 @@ fun RecipeScreen() {
 
     val recipeRepository: RecipeRepository = RecipeRepositoryImpl(api)
 
-    // Créer une instance de ViewModel avec RecipeViewModelFactory
     val viewModel: RecipeViewModel = viewModel(
         factory = RecipeViewModelFactory(recipeRepository)
     )
@@ -32,7 +31,7 @@ fun RecipeScreen() {
     val isLoading = viewModel.isLoading.value
     val error = viewModel.error.value
 
-    // Exemple de paramètres que tu veux passer
+    // Fixation des paramètres pour tester
     val cuisine = "Italian"
     val diet = "vegetarian"
     val number = 10

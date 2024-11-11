@@ -21,24 +21,22 @@ fun RecipeCard(recipe: Recipe) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        shape = RoundedCornerShape(8.dp), // Arrondi des coins
+        shape = RoundedCornerShape(8.dp),
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Image de la recette
             Image(
                 painter = rememberAsyncImagePainter(recipe.image),
                 contentDescription = recipe.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
-                    .padding(bottom = 8.dp), // Espacement sous l'image
-                contentScale = ContentScale.Crop // Recadrage de l'image
+                    .padding(bottom = 8.dp),
+                contentScale = ContentScale.Crop
             )
 
-            // Titre de la recette
             Text(
                 text = recipe.title,
                 textAlign = TextAlign.Center,
