@@ -10,24 +10,24 @@ class WorldMapActivity : AppCompatActivity() {
 
         val worldMap = findViewById<ImageMap>(R.id.worldMap)
         
-        // Configure les zones cliquables
-        worldMap.addShape("europe", /* coordonnées de la zone pour l'Europe */)
-        worldMap.addShape("asia", /* coordonnées de la zone pour l'Asie */)
-        worldMap.addShape("africa", /* coordonnées de la zone pour l'Afrique */)
+        // Configure the cliquable zones 
+        worldMap.addShape("europe", /* coordinates */)
+        worldMap.addShape("asia", /* coordinates */)
+        worldMap.addShape("africa", /* coordinates */)
 
-        // Gère les clics
+        // Handle clicks
         worldMap.setOnImageMapClickListener { id, _ ->
             when (id) {
                 "europe" -> openRecipes("europe")
                 "asia" -> openRecipes("asia")
                 "africa" -> openRecipes("africa")
-                // Ajoute d'autres régions selon tes besoins
+                "..."
             }
         }
     }
 
+    // depending on the region clicked, retrieves corresponding recipes 
     private fun openRecipes(region: String) {
-        // Lance une nouvelle activité ou fragment avec les recettes de la région
-        // Par exemple, en passant l'identifiant de la région à la nouvelle activité
+        // handling GET requests ?
     }
 }
