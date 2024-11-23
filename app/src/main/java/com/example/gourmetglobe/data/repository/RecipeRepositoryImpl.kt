@@ -5,32 +5,34 @@ import com.example.gourmetglobe.data.local.data.RecipeDAO
 import com.example.gourmetglobe.data.local.entities.RecipeEntity.RecipeEntity
 import com.example.gourmetglobe.domain.repository.repository.RecipeRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+
 import kotlinx.coroutines.withContext
 
 class RecipeRepositoryImpl(
     private val api: RecipeApi,
-    private val recipeDao: RecipeDAO // DAO pour gérer la base de données locale
+    private val recipeDao: RecipeDAO
 ) : RecipeRepository {
 
-    override suspend fun getRecipesByFilters(
+    override fun searchRecipes(
         title: String?,
         cuisine: String?,
-        diet: String?,
+        diet: List<String>?,
         dishType: String?,
         intolerances: List<String>?,
         equipment: List<String>?,
         ingredients: List<String>?,
         minCalories: Int?,
         maxCalories: Int?,
-        maxReadyTime: Int?,
-        number: Int
-    ): List<RecipeEntity> {
+        maxReadyTime: Int?
+    ): Flow<List<RecipeEntity>> {
+
         return try {
-            // Récupérer les recettes depuis l'API avec les paramètres de filtrage
-            val response = api.searchRecipes(
+            // Étape 1 : Appeler l'API
+            val apiResults = api.searchRecipes(
                 title = title,
                 cuisine = cuisine,
-                diet = diet,
+                diet = diet?.joinToString(","),
                 dishType = dishType,
                 intolerances = intolerances?.joinToString(","),
                 equipment = equipment?.joinToString(","),
@@ -38,71 +40,57 @@ class RecipeRepositoryImpl(
                 minCalories = minCalories,
                 maxCalories = maxCalories,
                 maxReadyTime = maxReadyTime,
-                number = number,
                 apiKey = "dfb061e309024285862277fff5f1028a"
+            ).results
+
+            // Convertir les résultats API en RecipeEntity
+            val apiRecipeEntities = apiResults.map { it.toEntity() }
+
+            // Sauvegarder les résultats de l'API dans la base locale
+            recipeDao.insertRecipes(apiRecipeEntities)
+
+            // Émettre les résultats de l'API
+            emit(apiRecipeEntities)
+        } catch (e: Exception) {
+
+            // Étape 3 : Récupérer les résultats depuis la base locale en cas d'erreur
+            val localResults = recipeDao.getRecipesByFilters(
+                title = title,
+                cuisine = cuisine,
+                diet = diet?.joinToString(","),
+                dishType = dishType,
+                intolerances = intolerances?.joinToString(","),
+                equipment = equipment?.joinToString(","),
+                ingredients = ingredients?.joinToString(","),
+                minCalories = minCalories,
+                maxCalories = maxCalories,
+                maxReadyTime = maxReadyTime
             )
 
-            val recipesFromApi = response.results
-
-            // Convertir les résultats de l'API en RecipeEntity
-            val recipeEntities = recipesFromApi.map { it.toEntity() }
-
-            // Sauvegarder les données dans la base locale
-            saveRecipesToLocalDatabase(recipeEntities)
-
-            recipeEntities // Renvoie la liste des recettes qui sont de type RecipeEntity
-
-        } catch (e: Exception) {
-            // En cas d'erreur, récupérer les données depuis la base locale
-            withContext(Dispatchers.IO) {
-                recipeDao.getRecipesByFilters(
-                    title = title,
-                    cuisine = cuisine,
-                    diet = diet,
-                    dishType = dishType,
-                    intolerances = intolerances,
-                    equipment = equipment,
-                    ingredients = ingredients,
-                    minCalories = minCalories,
-                    maxCalories = maxCalories,
-                    maxReadyTime = maxReadyTime
-                )
-            }
+            emit(localResults ?: emptyList()) // Émet une liste vide si aucun résultat trouvé
         }
+    }
+
+
+    override suspend fun toggleFavorite(recipeId: Int, isFavorite: Boolean) {
+        val recipe = recipeDao.getRecipeByIdSync(recipeId) // Requête synchrone
+        if (recipe != null) {
+            recipe.isFavorite = isFavorite
+            recipeDao.updateRecipe(recipe)
+        }
+    }
+
+    override fun getFavoriteRecipes(): Flow<List<RecipeEntity>> {
+        return recipeDao.getFavoriteRecipes()
     }
 
     override suspend fun getRecipeDetails(id: Int): RecipeEntity? {
         return try {
-            // Récupérer les détails d'une recette via l'API
-            val recipeDetails = api.getRecipeDetails(
-                id = id,
-                apiKey = "dfb061e309024285862277fff5f1028a"
-            )
-
-            // Convertir les détails de la recette en RecipeEntity
-            val recipeEntity = recipeDetails.toEntity()
-
-            // Sauvegarder ou mettre à jour la recette dans la base locale
-            saveRecipeToLocalDatabase(recipeEntity)
-
-            recipeEntity // Retourner la recette récupérée et sauvegardée
+            val details = api.getRecipeDetails(id, "dfb061e309024285862277fff5f1028a").toEntity()
+            recipeDao.insertRecipe(details)
+            details
         } catch (e: Exception) {
-            // En cas d'erreur, récupérer depuis la base locale
-            withContext(Dispatchers.IO) {
-                recipeDao.getRecipeById(id)
-            }
-        }
-    }
-
-    private suspend fun saveRecipesToLocalDatabase(recipeEntities: List<RecipeEntity>) {
-        withContext(Dispatchers.IO) {
-            recipeDao.insertRecipes(recipeEntities)
-        }
-    }
-
-    private suspend fun saveRecipeToLocalDatabase(recipeEntity: RecipeEntity) {
-        withContext(Dispatchers.IO) {
-            recipeDao.insertRecipe(recipeEntity)
+            recipeDao.getRecipeByIdSync(id) // Retourne depuis Room si erreur API
         }
     }
 }

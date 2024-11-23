@@ -22,7 +22,7 @@ class RecipeEntity {
         val diets: List<String> = emptyList(),       // Régimes alimentaires (ex. : "vegan", "vegetarian")
         val ingredients: List<String> = emptyList(), // Liste des ingrédients nécessaires
         val equipment: List<String> = emptyList(),   // Liste des ustensiles nécessaires
-        val isFavorite: Boolean = false             // Indique si la recette est marquée comme favorite
+        var isFavorite: Boolean = false             // Indique si la recette est marquée comme favorite
     )
 
 

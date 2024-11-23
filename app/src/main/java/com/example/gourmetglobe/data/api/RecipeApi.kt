@@ -5,7 +5,7 @@ import retrofit2.http.Query
 
 interface RecipeApi {
     @GET("recipes/complexSearch")
-    suspend fun searchRecipes(
+    fun searchRecipes(
         @Query("query") title: String? = null, // Titre de la recette
         @Query("includeIngredients") ingredients: String? = null, // Ingrédients
         @Query("cuisine") cuisine: String? = null, // Type de cuisine
