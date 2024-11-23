@@ -1,8 +1,6 @@
 package com.example.gourmetglobe.data.local.entities
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.example.gourmetglobe.data.model.Recipe
 
 class RecipeEntity {
 
@@ -18,7 +16,7 @@ class RecipeEntity {
 //        @Json(name = "servings")
         val servings: Int?,                   // Nombre de portions
         val calories: Int?,                   // Nombre de calories
-        val cuisines: List<String> = emptyList(), // Types de cuisines (ex. : "Italian", "French")
+        val cuisine: String? = null, // Types de cuisines (ex. : "Italian", "French")
         val dishTypes: List<String> = emptyList(), // Types de plat (ex. : "dessert", "main course")
         val intolerances: List<String> = emptyList(), // Liste des allergènes
         val diets: List<String> = emptyList(),       // Régimes alimentaires (ex. : "vegan", "vegetarian")
