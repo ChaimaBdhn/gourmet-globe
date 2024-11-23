@@ -3,6 +3,7 @@ package com.example.gourmetglobe.data.repository
 import com.example.gourmetglobe.data.api.RecipeApi
 import com.example.gourmetglobe.data.local.data.RecipeDAO
 import com.example.gourmetglobe.data.local.entities.RecipeEntity.RecipeEntity
+import com.example.gourmetglobe.data.model.Recipe
 import com.example.gourmetglobe.domain.repository.repository.RecipeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

@@ -1,6 +1,7 @@
 package com.example.gourmetglobe.data.local.entities
 
 import androidx.room.Entity
+import com.example.gourmetglobe.data.model.Recipe
 
 class RecipeEntity {
 
@@ -25,21 +26,24 @@ class RecipeEntity {
         var isFavorite: Boolean = false             // Indique si la recette est marquée comme favorite
     )
 
-
-//    fun toDomain(): Recipe {
-//        return Recipe(
-//            id = this.id,
-//            title = this.title,
-//            image = this.image,
-//            description = this.description,
-//            instructions = this.instructions,
-//            calories = this.calories,
-//            diets = this.diets.split(",").filter { it.isNotBlank() },
-//            intolerances = this.intolerances.split(",").filter { it.isNotBlank() },
-//            dishTypes = this.dishTypes.split(",").filter { it.isNotBlank() },
-//            equipment = this.equipment.split(",").filter { it.isNotBlank() },
-//            cuisine = this.cuisine
-//        )
-//    }
+    fun RecipeEntity.toRecipe(): Recipe {
+        return Recipe(
+            id = this.id,
+            title = this.title,
+            image = this.image,
+            description = this.summary,
+            instructions = this.instructions,
+            readyInMinutes = this.readyInMinutes,
+            servings = this.servings,
+            calories = this.calories,
+            cuisine = this.cuisine,
+            dishTypes = this.dishTypes,
+            intolerances = this.intolerances,
+            diets = this.diets,
+            ingredients = this.ingredients,
+            equipment = this.equipment,
+            isFavorite = this.isFavorite
+        )
+    }
 
 }
