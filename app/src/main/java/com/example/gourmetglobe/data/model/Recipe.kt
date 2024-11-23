@@ -7,6 +7,8 @@ data class Recipe(
     val id: Int,
     val title: String,
     val image: String,
+    val isFavorite: Boolean
+
 //    val vegan: Boolean? = null,
 //    val vegetarian: Boolean? = null,
 //
