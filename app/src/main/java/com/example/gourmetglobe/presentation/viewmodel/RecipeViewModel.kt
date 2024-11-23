@@ -12,6 +12,7 @@ import com.example.gourmetglobe.presentation.ui.state.RecipeState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlin.math.log
 
 
 class RecipeViewModel(
@@ -49,6 +50,7 @@ class RecipeViewModel(
                     // Convertir RecipeEntity en Recipe et émettre un état de succès
                     //_recipeState.value = RecipeState.Success(recipeEntities.map { it.toRecipe() })
                     _recipeState.value = RecipeState.Success(recipeEntities)
+                    Log.d("test","je suis rentré")
 
                 }
             } catch (e: Exception) {
