@@ -27,47 +27,48 @@ class RecipeRepositoryImpl(
         maxReadyTime: Int?
     ): Flow<List<RecipeEntity>> {
 
-        return try {
-            // Étape 1 : Appeler l'API
-            val apiResults = api.searchRecipes(
-                title = title,
-                cuisine = cuisine,
-                diet = diet?.joinToString(","),
-                dishType = dishType,
-                intolerances = intolerances?.joinToString(","),
-                equipment = equipment?.joinToString(","),
-                ingredients = ingredients?.joinToString(","),
-                minCalories = minCalories,
-                maxCalories = maxCalories,
-                maxReadyTime = maxReadyTime,
-                apiKey = "dfb061e309024285862277fff5f1028a"
-            ).results
+        return flow{
+                try {
+                // Étape 1 : Appeler l'API
+                val apiResults = api.searchRecipes(
+                    title = title,
+                    cuisine = cuisine,
+                    diet = diet?.joinToString(","),
+                    dishType = dishType,
+                    intolerances = intolerances?.joinToString(","),
+                    equipment = equipment?.joinToString(","),
+                    ingredients = ingredients?.joinToString(","),
+                    minCalories = minCalories,
+                    maxCalories = maxCalories,
+                    maxReadyTime = maxReadyTime,
+                    apiKey = "dfb061e309024285862277fff5f1028a"
+                ).results
 
-            // Convertir les résultats API en RecipeEntity
-            val apiRecipeEntities = apiResults.map { it.toEntity() }
+                // Convertir les résultats API en RecipeEntity
+                val apiRecipeEntities = apiResults.map { it.toEntity() }
 
-            // Sauvegarder les résultats de l'API dans la base locale
-            recipeDao.insertRecipes(apiRecipeEntities)
+                // Sauvegarder les résultats de l'API dans la base locale
+                recipeDao.insertRecipes(apiRecipeEntities)
 
-            // Émettre les résultats de l'API
-            emit(apiRecipeEntities)
-        } catch (e: Exception) {
+                // Émettre les résultats de l'API
+                emit(apiRecipeEntities)
+            } catch (e: Exception) {
 
-            // Étape 3 : Récupérer les résultats depuis la base locale en cas d'erreur
-            val localResults = recipeDao.getRecipesByFilters(
-                title = title,
-                cuisine = cuisine,
-                diet = diet?.joinToString(","),
-                dishType = dishType,
-                intolerances = intolerances?.joinToString(","),
-                equipment = equipment?.joinToString(","),
-                ingredients = ingredients?.joinToString(","),
-                minCalories = minCalories,
-                maxCalories = maxCalories,
-                maxReadyTime = maxReadyTime
-            )
-
-            emit(localResults ?: emptyList()) // Émet une liste vide si aucun résultat trouvé
+                // Étape 3 : Récupérer les résultats depuis la base locale en cas d'erreur
+                val localResults = recipeDao.getRecipesByFilters(
+                    title = title,
+                    cuisine = cuisine,
+                    diet = diet?.joinToString(","),
+                    dishType = dishType,
+                    intolerances = intolerances?.joinToString(","),
+                    equipment = equipment?.joinToString(","),
+                    ingredients = ingredients?.joinToString(","),
+                    minCalories = minCalories,
+                    maxCalories = maxCalories,
+                    maxReadyTime = maxReadyTime
+                ).first() // on met first pour recuperer les valeurs qui arrivent dans le flux ("une part une le temps qu'elles arrivent")
+                emit(localResults)
+            }
         }
     }
 
