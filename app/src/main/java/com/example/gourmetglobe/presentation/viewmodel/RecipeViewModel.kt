@@ -13,6 +13,8 @@ class RecipeViewModel(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
+    // Sealed class a voir pour les 3 states pour les chagner
+
     private val _recipes = mutableStateOf<List<Recipe>>(listOf())
     val recipes: State<List<Recipe>> = _recipes
 
