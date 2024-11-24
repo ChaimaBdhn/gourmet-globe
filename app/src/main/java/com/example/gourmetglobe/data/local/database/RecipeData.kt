@@ -1,6 +1,7 @@
 package com.example.gourmetglobe.data.local.database
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -20,12 +21,24 @@ abstract class RecipeDatabase : RoomDatabase() {
         // Méthode utilitaire pour obtenir la base de données
         fun getDatabase(context: Context): RecipeDatabase {
             return INSTANCE ?: synchronized(this) {
-                Room.databaseBuilder(
-                    context.applicationContext,
-                    RecipeDatabase::class.java,
-                    "recipe_database"
-                ).build().also { INSTANCE = it }
+                try {
+                    val instance = Room.databaseBuilder(
+                        context.applicationContext,
+                        RecipeDatabase::class.java,
+                        "recipe_database"
+                    )
+                        // Ajoutez des logs pour voir si l'instance est construite avec succès
+                        .build()
+                    INSTANCE = instance
+                    Log.d("test", "Database instance created successfully")
+                    instance
+                } catch (e: Exception) {
+                    // Si une exception se produit lors de la création de la base de données
+                    Log.e("test", "Error creating database: ${e.message}")
+                    throw e
+                }
             }
+
         }
     }
 }

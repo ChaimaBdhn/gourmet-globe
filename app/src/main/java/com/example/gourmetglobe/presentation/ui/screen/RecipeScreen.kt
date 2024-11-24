@@ -21,34 +21,26 @@ import com.example.gourmetglobe.data.repository.RecipeRepositoryImpl
 import com.example.gourmetglobe.domain.repository.repository.RecipeRepository
 import com.example.gourmetglobe.presentation.viewmodel.RecipeViewModelFactory
 import com.example.gourmetglobe.presentation.ui.state.RecipeState
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipeScreen() {
-    // Accéder au repository depuis MyApplication
-    val app = LocalContext.current.applicationContext as MyApplication
-    val recipeRepository = app.recipeRepository
+fun RecipeScreen(recipeRepository: RecipeRepository) {
 
+    // Créer le ViewModel en utilisant le repository
     val viewModel: RecipeViewModel = viewModel(factory = RecipeViewModelFactory(recipeRepository))
 
-    // Observer l'état des recettes depuis le ViewModel
+    // Observer les états
     val recipeState by viewModel.recipeState.collectAsState()
     val isLoading = recipeState is RecipeState.Loading
     val error = (recipeState as? RecipeState.Error)?.message
     val recipes = (recipeState as? RecipeState.Success)?.recipes ?: emptyList()
 
-    // Paramètres pour tester
-    val cuisine = "Italian"
-    val diet = "vegetarian"
-    val number = 10
-
-    // Charger les recettes dès le début
-    LaunchedEffect(Unit) {
+    // Charger les recettes au premier rendu uniquement
+    LaunchedEffect(viewModel) {
         viewModel.searchRecipes(
             title = null,
-            cuisine = cuisine,
-            diet = listOf(diet),
+            cuisine = "Italian",
+            diet = listOf("vegetarian"),
             dishType = null,
             intolerances = null,
             equipment = null,
@@ -65,28 +57,34 @@ fun RecipeScreen() {
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-            if (isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else if (error != null) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = error, color = MaterialTheme.colorScheme.error)
-                }
-            } else {
-                // Afficher la liste des recettes
-                RecipeList(
-                    recipes = recipes,
-                    onHeartClick = { recipe ->
-                        viewModel.toggleFavorite(recipe.id, !recipe.isFavorite)
+            when {
+                isLoading -> {
+                    // Affichage du chargement
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
-                )
+                }
+                error != null -> {
+                    // Affichage de l'erreur
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = error, color = MaterialTheme.colorScheme.error)
+                    }
+                }
+                else -> {
+                    // Affichage des recettes
+                    RecipeList(
+                        recipes = recipes,
+                        onHeartClick = { recipe ->
+                            viewModel.toggleFavorite(recipe.id, !recipe.isFavorite)
+                        }
+                    )
+                }
             }
         }
     }
