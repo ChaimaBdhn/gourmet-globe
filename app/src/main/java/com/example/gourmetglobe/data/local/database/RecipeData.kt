@@ -5,12 +5,14 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.gourmetglobe.data.local.data.RecipeDAO
+import com.example.gourmetglobe.data.local.entities.Converters
 import com.example.gourmetglobe.data.local.entities.RecipeEntity
 
+@TypeConverters(Converters::class)
 @Database(entities = [RecipeEntity::class], version = 1, exportSchema = false)
 abstract class RecipeDatabase : RoomDatabase() {
-
     abstract fun recipeDao(): RecipeDAO
 
     companion object {

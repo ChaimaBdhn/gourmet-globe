@@ -2,6 +2,7 @@ package com.example.gourmetglobe.data.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
 import com.example.gourmetglobe.data.model.Recipe
 
 
