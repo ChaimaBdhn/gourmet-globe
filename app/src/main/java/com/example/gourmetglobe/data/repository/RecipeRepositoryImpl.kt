@@ -84,10 +84,10 @@ class RecipeRepositoryImpl(
             try {
                 Log.d("test", "${recipe}")
                 recipeDao.updateRecipe(recipe)
+                recipeDao.getAllRecipes()
             } catch (e:Exception) {
                 Log.e("test", e.toString())
             }
-
         }
     }
 
