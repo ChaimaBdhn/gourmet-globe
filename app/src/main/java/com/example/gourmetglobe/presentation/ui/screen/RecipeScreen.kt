@@ -40,7 +40,7 @@ fun RecipeScreen(recipeRepository: RecipeRepository) {
         viewModel.searchRecipes(
             title = null,
             cuisine = "Italian",
-            diet = listOf("vegetarian"),
+            diet = null,
             dishType = null,
             intolerances = null,
             equipment = null,

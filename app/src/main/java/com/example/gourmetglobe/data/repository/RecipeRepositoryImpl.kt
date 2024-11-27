@@ -1,5 +1,6 @@
 package com.example.gourmetglobe.data.repository
 
+import android.util.Log
 import com.example.gourmetglobe.data.api.RecipeApi
 import com.example.gourmetglobe.data.local.data.RecipeDAO
 import com.example.gourmetglobe.data.local.entities.RecipeEntity
@@ -45,17 +46,18 @@ class RecipeRepositoryImpl(
                     maxReadyTime = maxReadyTime,
                     apiKey = "dfb061e309024285862277fff5f1028a"
                 ).results
-
+                Log.d("test", "${apiResults}")
                 // Convertir les résultats API en RecipeEntity
                 val apiRecipeEntities = apiResults.map { it.toEntity() }
-
                 // Sauvegarder les résultats de l'API dans la base locale
-                recipeDao.insertRecipes(apiRecipeEntities)
+                    Log.d("test", "${apiRecipeEntities}")
+
+                    recipeDao.insertRecipes(apiRecipeEntities)
 
                 // Émettre les résultats de l'API
-                emit(apiRecipeEntities)
-            } catch (e: Exception) {
 
+                    emit(apiRecipeEntities)
+            } catch (e: Exception) {
                 // Étape 3 : Récupérer les résultats depuis la base locale en cas d'erreur
                 val localResults = recipeDao.getRecipesByFilters(
                     title = title,
@@ -79,7 +81,13 @@ class RecipeRepositoryImpl(
         val recipe = recipeDao.getRecipeByIdSync(recipeId) // Requête synchrone
         if (recipe != null) {
             recipe.isFavorite = isFavorite
-            recipeDao.updateRecipe(recipe)
+            try {
+                Log.d("test", "${recipe}")
+                recipeDao.updateRecipe(recipe)
+            } catch (e:Exception) {
+                Log.e("test", e.toString())
+            }
+
         }
     }
 

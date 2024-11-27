@@ -43,7 +43,7 @@ interface RecipeDAO {
     ): Flow<List<RecipeEntity>>
 
     @Query("SELECT * FROM recipes WHERE id = :id")
-    fun getRecipeByIdSync(id: Int): RecipeEntity?
+    suspend fun getRecipeByIdSync(id: Int): RecipeEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecipe(recipe: RecipeEntity)
@@ -55,7 +55,7 @@ interface RecipeDAO {
     fun getRecipesByCuisine(cuisine: String): Flow <List<RecipeEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertRecipes(recipes: List<RecipeEntity>)
+    suspend fun insertRecipes(recipes: List<RecipeEntity>)
 
     @Update
     suspend fun updateRecipe(recipe: RecipeEntity)

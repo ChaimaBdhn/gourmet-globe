@@ -50,7 +50,7 @@ class RecipeViewModel(
                     // Convertir RecipeEntity en Recipe et émettre un état de succès
                     //_recipeState.value = RecipeState.Success(recipeEntities.map { it.toRecipe() })
                     _recipeState.value = RecipeState.Success(recipeEntities)
-                    Log.d("test","je suis rentré")
+                    Log.d("test","je suis rentré : ${recipeEntities} ")
 
                 }
             } catch (e: Exception) {
@@ -81,6 +81,8 @@ class RecipeViewModel(
     fun toggleFavorite(recipeId: Int, isFavorite: Boolean) {
         viewModelScope.launch {
             recipeRepository.toggleFavorite(recipeId, isFavorite)
+            val ba = recipeRepository.getFavoriteRecipes()
+            Log.d("test", "${ba}")
         }
     }
 

@@ -19,15 +19,15 @@ class MainActivity : ComponentActivity() {
         Log.d("test", "je suis dans la mainActivité AVANT")
 
         super.onCreate(savedInstanceState)
-//        Log.d("coucou", "je suis dans la mainActivité AVANT")
+        Log.d("coucou", "je suis dans la mainActivité AVANT")
 
 //        // Récupérer l'instance de MyApplication pour accéder aux dépendances
          val app = application as MyApplication
-//        Log.d("test", "je suis dans la mainActivité AVANT recipe")
+        Log.d("test", "je suis dans la mainActivité AVANT recipe")
 
 //        // Accéder au repository directement via l'application
          val recipeRepository = app.recipeRepository
-//        Log.d("test", "je suis dans la mainActivité APRES recipe")
+        Log.d("test", "je suis dans la mainActivité APRES recipe")
 
         setContent {
             Log.d("MainActivity", "App started successfully")
