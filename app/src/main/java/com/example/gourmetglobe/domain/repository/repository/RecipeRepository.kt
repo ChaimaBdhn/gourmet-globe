@@ -1,6 +1,6 @@
 package com.example.gourmetglobe.domain.repository.repository
 
-import com.example.gourmetglobe.data.local.entities.RecipeEntity.RecipeEntity
+import com.example.gourmetglobe.data.local.entities.RecipeEntity
 import com.example.gourmetglobe.data.model.Recipe
 import kotlinx.coroutines.flow.Flow
 

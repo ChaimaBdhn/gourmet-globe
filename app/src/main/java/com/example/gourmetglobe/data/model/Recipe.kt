@@ -1,6 +1,6 @@
 package com.example.gourmetglobe.data.model
 
-import com.example.gourmetglobe.data.local.entities.RecipeEntity.RecipeEntity
+import com.example.gourmetglobe.data.local.entities.RecipeEntity
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

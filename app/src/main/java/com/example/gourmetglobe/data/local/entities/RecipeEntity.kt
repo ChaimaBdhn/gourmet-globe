@@ -1,12 +1,14 @@
 package com.example.gourmetglobe.data.local.entities
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.example.gourmetglobe.data.model.Recipe
 
-class RecipeEntity {
+
 
     @Entity(tableName = "recipes")
     data class RecipeEntity(
+        @PrimaryKey
         val id: Int,                          // ID unique de la recette
         val title: String,                    // Titre de la recette
         val image: String?,                   // URL de l'image de la recette
@@ -24,26 +26,25 @@ class RecipeEntity {
         val ingredients: List<String> = emptyList(), // Liste des ingrédients nécessaires
         val equipment: List<String> = emptyList(),   // Liste des ustensiles nécessaires
         var isFavorite: Boolean = false             // Indique si la recette est marquée comme favorite
-    )
+    ) {
 
-    fun RecipeEntity.toRecipe(): Recipe {
-        return Recipe(
-            id = this.id,
-            title = this.title,
-            image = this.image,
-            description = this.summary,
-            instructions = this.instructions,
-            readyInMinutes = this.readyInMinutes,
-            servings = this.servings,
-            calories = this.calories,
-            cuisine = this.cuisine,
-            dishTypes = this.dishTypes,
-            intolerances = this.intolerances,
-            diets = this.diets,
-            ingredients = this.ingredients,
-            equipment = this.equipment,
-            isFavorite = this.isFavorite
-        )
+        fun RecipeEntity.toRecipe(): Recipe {
+            return Recipe(
+                id = this.id,
+                title = this.title,
+                image = this.image,
+                description = this.summary,
+                instructions = this.instructions,
+                readyInMinutes = this.readyInMinutes,
+                servings = this.servings,
+                calories = this.calories,
+                cuisine = this.cuisine,
+                dishTypes = this.dishTypes,
+                intolerances = this.intolerances,
+                diets = this.diets,
+                ingredients = this.ingredients,
+                equipment = this.equipment,
+                isFavorite = this.isFavorite
+            )
+        }
     }
-
-}

@@ -3,7 +3,7 @@ package com.example.gourmetglobe.data.local.data
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy
-import com.example.gourmetglobe.data.local.entities.RecipeEntity.RecipeEntity
+import com.example.gourmetglobe.data.local.entities.RecipeEntity
 import com.example.gourmetglobe.data.model.Recipe
 import kotlinx.coroutines.flow.Flow
 

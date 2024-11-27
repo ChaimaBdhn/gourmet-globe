@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.example.gourmetglobe.R
-import com.example.gourmetglobe.data.local.entities.RecipeEntity.RecipeEntity
+import com.example.gourmetglobe.data.local.entities.RecipeEntity
 import com.example.gourmetglobe.data.model.Recipe
 
 @Composable

@@ -1,6 +1,6 @@
 package com.example.gourmetglobe.presentation.ui.state
 
-import com.example.gourmetglobe.data.local.entities.RecipeEntity.RecipeEntity
+import com.example.gourmetglobe.data.local.entities.RecipeEntity
 import com.example.gourmetglobe.data.model.Recipe
 
 //Sealed Class pour représenter les différents états des recettes

@@ -13,7 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gourmetglobe.MyApplication
 import com.example.gourmetglobe.data.local.data.RecipeDAO
 import com.example.gourmetglobe.data.local.database.RecipeDatabase
-import com.example.gourmetglobe.data.local.entities.RecipeEntity.RecipeEntity
+import com.example.gourmetglobe.data.local.entities.RecipeEntity
 import com.example.gourmetglobe.presentation.viewmodel.RecipeViewModel
 import com.example.gourmetglobe.data.model.Recipe
 import com.example.gourmetglobe.data.model.RecipeService.api

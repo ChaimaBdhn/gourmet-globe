@@ -20,13 +20,13 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 //        Log.d("coucou", "je suis dans la mainActivité AVANT")
-//
+
 //        // Récupérer l'instance de MyApplication pour accéder aux dépendances
-//        val app = application as MyApplication
+         val app = application as MyApplication
 //        Log.d("test", "je suis dans la mainActivité AVANT recipe")
-//
+
 //        // Accéder au repository directement via l'application
-//        val recipeRepository = app.recipeRepository
+         val recipeRepository = app.recipeRepository
 //        Log.d("test", "je suis dans la mainActivité APRES recipe")
 
         setContent {
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
             GourmetGlobeTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     // Appeler la fonction RecipeScreen en lui passant le repository
-                    //RecipeScreen(recipeRepository = recipeRepository) // RecipeScreen a maintenant accès au repository
+                    RecipeScreen(recipeRepository = recipeRepository) // RecipeScreen a maintenant accès au repository
                 }
             }
         }
