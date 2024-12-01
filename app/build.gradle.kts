@@ -52,7 +52,8 @@ android {
 
 dependencies {
     // Room - Dépendances
-    implementation("androidx.room:room-runtime:2.5.1")  // Room runtime
+    implementation("androidx.room:room-runtime:2.5.1")
+    implementation(libs.androidx.navigation.compose)  // Room runtime
     ksp("androidx.room:room-compiler:2.5.1")           // KSP pour générer le code d'implémentation Room
     implementation("androidx.room:room-ktx:2.5.1")    // Extensions pour Kotlin (par exemple, pour les coroutines)
 
@@ -98,4 +99,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
 
-}
+    implementation ("androidx.compose.ui:ui:1.4.0")  // La dernière version de Jetpack Compose
+    implementation ("androidx.compose.material3:material3:1.1.0") // Version de Material3
+    implementation ("androidx.navigation:navigation-compose:2.6.0")  // Pour la navigation Jetpack Compose
+    }

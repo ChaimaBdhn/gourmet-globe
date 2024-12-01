@@ -7,11 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import com.example.gourmetglobe.presentation.ui.screen.RecipeScreen
+import com.example.gourmetglobe.presentation.navigation.Navigation
 import com.example.gourmetglobe.ui.theme.GourmetGlobeTheme
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +32,8 @@ class MainActivity : ComponentActivity() {
             GourmetGlobeTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     // Appeler la fonction RecipeScreen en lui passant le repository
-                    RecipeScreen(recipeRepository = recipeRepository) // RecipeScreen a maintenant accès au repository
+                    // RecipeScreen(recipeRepository = recipeRepository) // RecipeScreen a maintenant accès au repository
+                    Navigation(recipeRepository = recipeRepository)
                 }
             }
         }
