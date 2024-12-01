@@ -12,13 +12,11 @@ import com.example.gourmetglobe.data.model.Recipe
         val id: Int,                          // ID unique de la recette
         val title: String,                    // Titre de la recette
         val image: String?,                   // URL de l'image de la recette
-        val summary: String?,                 // Résumé ou description courte
-        val instructions: String?,            // Instructions de préparation
-//        @Json(name = "readyInMinutes")
-        val readyInMinutes: Int?,             // Temps de préparation
-//        @Json(name = "servings")
-        val servings: Int?,                   // Nombre de portions
-        val calories: Int?,                   // Nombre de calories
+        val summary: String?= null,                 // Résumé ou description courte
+        val instructions: String?= null,            // Instructions de préparation
+        val readyInMinutes: Int?= null,             // Temps de préparation
+        val servings: Int?= null,                   // Nombre de portions
+        val calories: Int?= null,                   // Nombre de calories
         val cuisine: String? = null, // Types de cuisines (ex. : "Italian", "French")
         val dishTypes: List<String> = emptyList(), // Types de plat (ex. : "dessert", "main course")
         val intolerances: List<String> = emptyList(), // Liste des allergènes
@@ -27,24 +25,8 @@ import com.example.gourmetglobe.data.model.Recipe
         val equipment: List<String> = emptyList(),   // Liste des ustensiles nécessaires
         var isFavorite: Boolean = false             // Indique si la recette est marquée comme favorite
     ) {
-
-        fun RecipeEntity.toRecipe(): Recipe {
-            return Recipe(
-                id = this.id,
-                title = this.title,
-                image = this.image,
-                description = this.summary,
-                instructions = this.instructions,
-                readyInMinutes = this.readyInMinutes,
-                servings = this.servings,
-                calories = this.calories,
-                cuisine = this.cuisine,
-                dishTypes = this.dishTypes,
-                intolerances = this.intolerances,
-                diets = this.diets,
-                ingredients = this.ingredients,
-                equipment = this.equipment,
-                isFavorite = this.isFavorite
-            )
+        fun mergeFavorites(localRecipe: RecipeEntity): RecipeEntity {
+            this.isFavorite = localRecipe.isFavorite
+            return this
         }
     }
