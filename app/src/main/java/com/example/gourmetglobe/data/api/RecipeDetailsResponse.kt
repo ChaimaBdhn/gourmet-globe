@@ -1,6 +1,5 @@
 package com.example.gourmetglobe.data.api
 import com.example.gourmetglobe.data.local.entities.RecipeEntity
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
@@ -20,15 +19,6 @@ data class RecipeDetailsResponse(
     val extendedIngredients: List<Ingredient> = emptyList(), // Liste des ingrédients nécessaires
     val equipment: List<String> = emptyList()  // Liste des ustensiles nécessaires
 ) {
-    data class Nutrition(
-        val nutrients: List<Nutrient>
-    ) {
-        data class Nutrient(
-            val name: String,
-            val amount: Float,
-            val unit: String
-        )
-    }
 
     data class Ingredient(
         val name: String,
@@ -53,7 +43,6 @@ data class RecipeDetailsResponse(
             diets = diets,
             ingredients = extendedIngredients.map { it.name }, // Extraction des noms des ingrédients
             equipment = equipment,          // Extraction des noms des ustensiles
-            isFavorite = false  // Par défaut, les recettes ne sont pas favorites
         )
     }
 }
