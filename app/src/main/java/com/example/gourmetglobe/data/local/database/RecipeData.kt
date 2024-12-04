@@ -6,6 +6,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.gourmetglobe.data.local.data.RecipeDAO
 import com.example.gourmetglobe.data.local.entities.Converters
 import com.example.gourmetglobe.data.local.entities.RecipeEntity
@@ -44,4 +46,5 @@ abstract class RecipeDatabase : RoomDatabase() {
         }
     }
 }
+
 

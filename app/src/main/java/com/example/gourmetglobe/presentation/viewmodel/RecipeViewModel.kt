@@ -1,19 +1,15 @@
 package com.example.gourmetglobe.presentation.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gourmetglobe.data.model.Recipe
 import com.example.gourmetglobe.domain.repository.repository.RecipeRepository
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.State
 import com.example.gourmetglobe.presentation.ui.state.RecipeState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlin.math.log
-
+import kotlinx.coroutines.flow.onStart
 
 class RecipeViewModel(
     private val recipeRepository: RecipeRepository
@@ -23,7 +19,6 @@ class RecipeViewModel(
     private val _recipeState = MutableStateFlow<RecipeState>(RecipeState.Loading)
     val recipeState: StateFlow<RecipeState> get() = _recipeState
 
-    // Fonction de recherche de recettes
     fun searchRecipes(
         title: String?,
         cuisine: String?,
@@ -44,20 +39,37 @@ class RecipeViewModel(
                 recipeRepository.searchRecipes(
                     title, cuisine, diet, dishType, intolerances, equipment,
                     ingredients, minCalories, maxCalories, maxReadyTime
-                ).catch { e ->
-                    _recipeState.value = RecipeState.Error("Error fetching recipes: ${e.message}")
-                }.collect { recipeEntities ->
-                    // Convertir RecipeEntity en Recipe et émettre un état de succès
-                    //_recipeState.value = RecipeState.Success(recipeEntities.map { it.toRecipe() })
-                    _recipeState.value = RecipeState.Success(recipeEntities)
-                    Log.d("test","je suis rentré : ${recipeEntities} ")
+                )
+                    .onStart {
+                        Log.d("SearchRecipes", "Recherche commencée avec les critères : titre=$title, cuisine=$cuisine, diet=$diet, dishType=$dishType, intolerances=$intolerances, equipment=$equipment, ingredients=$ingredients, minCalories=$minCalories, maxCalories=$maxCalories, maxReadyTime=$maxReadyTime")
+                    }
 
-                }
+                    .catch { e ->
+
+                        Log.e("SearchRecipes", "Erreur lors de la recherche : ${e.message}", e)
+                        _recipeState.value = RecipeState.Error("Erreur lors de la recherche : ${e.message}")
+                    }
+
+                    .collect { recipeEntities ->
+                        if (recipeEntities.isEmpty()) {
+
+                            Log.w("SearchRecipes", "Aucune recette trouvée avec les critères fournis.")
+                            _recipeState.value = RecipeState.Error("Aucune recette trouvée.")
+
+                        } else {
+                            Log.d("SearchRecipes", "Recettes récupérées avec succès : ${recipeEntities.size} recettes.")
+                            // Convertir les entités récupérées en modèles métier (si nécessaire)
+                            _recipeState.value = RecipeState.Success(recipeEntities)
+                        }
+                    }
             } catch (e: Exception) {
-                _recipeState.value = RecipeState.Error("Error fetching recipes: ${e.message}")
+                // Gérer les exceptions générales
+                Log.e("SearchRecipes", "Exception inattendue : ${e.message}", e)
+                _recipeState.value = RecipeState.Error("Erreur inattendue : ${e.message}")
             }
         }
     }
+
 
     // Fonction pour récupérer les recettes favorites
     fun getFavoriteRecipes() {
@@ -67,8 +79,6 @@ class RecipeViewModel(
                     .catch { e ->
                         _recipeState.value = RecipeState.Error("Error fetching favorite recipes: ${e.message}")
                     }.collect { recipeEntities ->
-                        // Convertir RecipeEntity en Recipe et émettre un état de succès
-                        //_recipeState.value = RecipeState.Success(recipeEntities.map { it.toRecipe() })
                         _recipeState.value = RecipeState.Success(recipeEntities)
                     }
             } catch (e: Exception) {
@@ -77,24 +87,46 @@ class RecipeViewModel(
         }
     }
 
-    // Fonction pour changer le statut "favorite" d'une recette
+    //    // Fonction pour changer le statut "favorite" d'une recette
+//    fun toggleFavorite(recipeId: Int, isFavorite: Boolean) {
+//        viewModelScope.launch {
+//            Log.d("test", "ID : ${recipeId} Favorite: ${isFavorite}")
+//            recipeRepository.toggleFavorite(recipeId, isFavorite)
+//        }
+//    }
     fun toggleFavorite(recipeId: Int, isFavorite: Boolean) {
         viewModelScope.launch {
-            recipeRepository.toggleFavorite(recipeId, isFavorite)
-            val ba = recipeRepository.getFavoriteRecipes()
-            Log.d("test", "${ba}")
-        }
-    }
-
-    // Fonction pour récupérer les détails d'une recette
-    fun getRecipeDetails(id: Int) {
-        viewModelScope.launch {
             try {
-                val recipe = recipeRepository.getRecipeDetails(id)
-                // Gérer le résultat de l'appel API ou de la base de données ici
+                // Met à jour dans la base de données
+                recipeRepository.toggleFavorite(recipeId, isFavorite)
+
+                // Met à jour dans l'état local (Immutable List Copy)
+                val currentState = _recipeState.value
+                if (currentState is RecipeState.Success) {
+                    val updatedRecipes = currentState.recipes.map { recipe ->
+                        if (recipe.id == recipeId) recipe.copy(isFavorite = isFavorite) else recipe
+                    }
+                    _recipeState.value = RecipeState.Success(updatedRecipes)
+                }
             } catch (e: Exception) {
-                _recipeState.value = RecipeState.Error("Error fetching recipe details: ${e.message}")
+                Log.e("toggleFavorite", "Erreur lors de la mise à jour du favori : ${e.message}", e)
             }
         }
     }
+
+    private fun refreshRecipes() {
+        viewModelScope.launch {
+            recipeRepository.getAllRecipes()
+                .catch { e -> _recipeState.value = RecipeState.Error("Error loading recipes: ${e.message}") }
+                .collect { recipes ->
+                    _recipeState.value = RecipeState.Success(recipes)
+                }
+        }
+    }
+
+
+    fun getAllRecipes(){
+        refreshRecipes()
+    }
+
 }

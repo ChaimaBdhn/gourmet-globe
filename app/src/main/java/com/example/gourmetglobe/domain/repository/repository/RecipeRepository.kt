@@ -27,5 +27,7 @@ interface RecipeRepository {
     fun getFavoriteRecipes(): Flow<List<RecipeEntity>>
 
     // Récupération d'une recette par son ID (hors ligne ou pas)
-    suspend fun getRecipeDetails(id: Int): RecipeEntity?
+    suspend fun getRecipeDetails(id: Int): RecipeEntity
+
+    fun getAllRecipes(): Flow<List<RecipeEntity>>
 }

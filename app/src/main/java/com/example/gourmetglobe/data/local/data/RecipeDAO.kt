@@ -4,7 +4,6 @@ package com.example.gourmetglobe.data.local.data
 import androidx.room.*
 import androidx.room.OnConflictStrategy
 import com.example.gourmetglobe.data.local.entities.RecipeEntity
-import com.example.gourmetglobe.data.model.Recipe
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -43,16 +42,11 @@ interface RecipeDAO {
     ): Flow<List<RecipeEntity>>
 
     @Query("SELECT * FROM recipes WHERE id = :id")
-    suspend fun getRecipeByIdSync(id: Int): RecipeEntity?
+    suspend fun getRecipeByIdSync(id: Int): RecipeEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecipe(recipe: RecipeEntity)
 
-    @Query("SELECT * FROM recipes WHERE title LIKE '%' || :query || '%'")
-    fun getRecipesByTitle(query: String): Flow <List<RecipeEntity>>
-
-    @Query("SELECT * FROM recipes WHERE cuisine LIKE '%' || :cuisine || '%'")
-    fun getRecipesByCuisine(cuisine: String): Flow <List<RecipeEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecipes(recipes: List<RecipeEntity>)
@@ -60,6 +54,4 @@ interface RecipeDAO {
     @Update
     suspend fun updateRecipe(recipe: RecipeEntity)
 
-    @Delete
-    suspend fun deleteRecipe(recipe: RecipeEntity)
 }

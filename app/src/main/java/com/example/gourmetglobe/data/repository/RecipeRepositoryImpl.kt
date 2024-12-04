@@ -4,12 +4,8 @@ import android.util.Log
 import com.example.gourmetglobe.data.api.RecipeApi
 import com.example.gourmetglobe.data.local.data.RecipeDAO
 import com.example.gourmetglobe.data.local.entities.RecipeEntity
-import com.example.gourmetglobe.data.model.Recipe
 import com.example.gourmetglobe.domain.repository.repository.RecipeRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-
-import kotlinx.coroutines.withContext
 
 class RecipeRepositoryImpl(
     private val api: RecipeApi,
@@ -31,7 +27,7 @@ class RecipeRepositoryImpl(
     ): Flow<List<RecipeEntity>> {
 
         return flow{
-                try {
+            try {
                 // Étape 1 : Appeler l'API
                 val apiResults = api.searchRecipes(
                     title = title,
@@ -46,17 +42,23 @@ class RecipeRepositoryImpl(
                     maxReadyTime = maxReadyTime,
                     apiKey = "dfb061e309024285862277fff5f1028a"
                 ).results
-                Log.d("test", "${apiResults}")
+                Log.d("SearchRecipes", "${apiResults}")
+
                 // Convertir les résultats API en RecipeEntity
                 val apiRecipeEntities = apiResults.map { it.toEntity() }
-                // Sauvegarder les résultats de l'API dans la base locale
-                    Log.d("test", "${apiRecipeEntities}")
 
-                    recipeDao.insertRecipes(apiRecipeEntities)
+
+                // Sauvegarder les résultats de l'API dans la base locale
+                Log.d("SearchRecipes", "${apiRecipeEntities}")
+
+                recipeDao.insertRecipes(apiRecipeEntities)
+
+                Log.d("SearchRecipes", "Je suis après l'insertion dans Room")
+
 
                 // Émettre les résultats de l'API
 
-                    emit(apiRecipeEntities)
+                emit(apiRecipeEntities)
             } catch (e: Exception) {
                 // Étape 3 : Récupérer les résultats depuis la base locale en cas d'erreur
                 val localResults = recipeDao.getRecipesByFilters(
@@ -79,15 +81,12 @@ class RecipeRepositoryImpl(
 
     override suspend fun toggleFavorite(recipeId: Int, isFavorite: Boolean) {
         val recipe = recipeDao.getRecipeByIdSync(recipeId) // Requête synchrone
-        if (recipe != null) {
-            recipe.isFavorite = isFavorite
-            try {
-                Log.d("test", "${recipe}")
-                recipeDao.updateRecipe(recipe)
-                recipeDao.getAllRecipes()
-            } catch (e:Exception) {
-                Log.e("test", e.toString())
-            }
+        recipe.isFavorite = isFavorite
+        try {
+            Log.d("test", "${recipe}")
+            recipeDao.updateRecipe(recipe)
+        } catch (e:Exception) {
+            Log.e("test", e.toString())
         }
     }
 
@@ -95,13 +94,25 @@ class RecipeRepositoryImpl(
         return recipeDao.getFavoriteRecipes()
     }
 
-    override suspend fun getRecipeDetails(id: Int): RecipeEntity? {
+
+
+    override fun getAllRecipes(): Flow<List<RecipeEntity>> {
+        return recipeDao.getAllRecipes()
+    }
+
+    override suspend fun getRecipeDetails(id: Int): RecipeEntity {
+
         return try {
+
+            val localRecipe = recipeDao.getRecipeByIdSync(id)
             val details = api.getRecipeDetails(id, "dfb061e309024285862277fff5f1028a").toEntity()
-            recipeDao.insertRecipe(details)
+                .mergeFavorites(localRecipe)
+
+            recipeDao.updateRecipe(details)
+
             details
         } catch (e: Exception) {
-            recipeDao.getRecipeByIdSync(id) // Retourne depuis Room si erreur API
+            recipeDao.getRecipeByIdSync(id)
         }
     }
 }

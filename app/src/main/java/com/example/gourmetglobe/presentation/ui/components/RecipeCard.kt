@@ -1,4 +1,4 @@
-package com.example.gourmetglobe.presentation.ui.screen
+package com.example.gourmetglobe.presentation.ui.components
 
 
 import androidx.compose.foundation.Image
@@ -14,45 +14,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.example.gourmetglobe.R
 import com.example.gourmetglobe.data.local.entities.RecipeEntity
-import com.example.gourmetglobe.data.model.Recipe
 
 @Composable
 fun RecipeCard(
     recipe: RecipeEntity,
     onHeartClick: (RecipeEntity) -> Unit, // Callback pour gérer les favoris
-    isFavorite: Boolean // Détermine si cette recette est déjà en favoris
-    ){
-
+    isFavorite: Boolean, // Détermine si cette recette est déjà en favoris
+    onClick: ()-> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(8.dp),
+            .padding(8.dp)
+            .clickable(){onClick()},
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(8.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        )  {
-            Box {
+        Column {
+            // Image avec le bouton favori
+            Box  {
+                // Image principale
                 Image(
-                    painter = rememberImagePainter(data = recipe.image),
+                    painter = rememberAsyncImagePainter(model = recipe.image),
                     contentDescription = recipe.title,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
                 )
-                // Bouton cœur
-                Box(
+                // Bouton favori
+                IconButton(
+                    onClick = { onHeartClick(recipe) },
                     modifier = Modifier
                         .padding(8.dp)
                         .align(Alignment.TopEnd)
-                        .size(40.dp)
                         .background(Color.White, CircleShape)
-                        .clickable { onHeartClick(recipe) },
-                    contentAlignment = Alignment.Center
+                        .size(36.dp)
                 ) {
                     Icon(
                         painter = painterResource(
@@ -62,8 +61,24 @@ fun RecipeCard(
                         tint = if (isFavorite) Color.Red else Color.Gray
                     )
                 }
+
+            }
+
+
+            // Informations sur la recette
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = recipe.title ?: "Titre indisponible",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+//                Text(
+//                    text = recipe.description ?: "Description indisponible",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    color = MaterialTheme.colorScheme.onSurfaceVariant
+//                )
             }
         }
-
     }
 }
