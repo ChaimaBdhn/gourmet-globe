@@ -14,6 +14,7 @@ import com.example.gourmetglobe.presentation.ui.components.RecipeCard
 import com.example.gourmetglobe.presentation.ui.state.RecipeState
 import com.example.gourmetglobe.presentation.viewmodel.RecipeViewModel
 import com.example.gourmetglobe.presentation.viewmodel.RecipeViewModelFactory
+
 @Composable
 fun FavoritesScreen(recipeRepository: RecipeRepository, navController: NavController) {
     val viewModel: RecipeViewModel = viewModel(factory = RecipeViewModelFactory(recipeRepository))
@@ -23,38 +24,42 @@ fun FavoritesScreen(recipeRepository: RecipeRepository, navController: NavContro
         viewModel.getFavoriteRecipes() // Charger les recettes favorites dès le démarrage
     }
 
-    when (val state = recipeState) {
-        is RecipeState.Success -> {
-            if (state.recipes.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("No favorite recipes yet!", style = MaterialTheme.typography.bodyLarge)
-                }
-            } else {
-                LazyColumn {
-                    items(state.recipes.size) { index ->
-                        val recipe = state.recipes[index]
-                        Log.d("favorites","${recipe}" )
-                        RecipeCard(
-                            recipe = recipe,
-                            onHeartClick = { viewModel.toggleFavorite(recipe.id, !recipe.isFavorite) },
-                            isFavorite = recipe.isFavorite,
-                            onClick = {
-                                // Naviguer vers la page de détails de la recette
-                                navController.navigate("recipeDetails/${recipe.id}")
-                            }
-                        )
+
+    Column(modifier = Modifier.fillMaxSize()) {
+
+        when (val state = recipeState) {
+            is RecipeState.Success -> {
+                if (state.recipes.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("No favorite recipes yet!", style = MaterialTheme.typography.bodyLarge)
+                    }
+                } else {
+                    LazyColumn {
+                        items(state.recipes.size) { index ->
+                            val recipe = state.recipes[index]
+                            Log.d("favorites","${recipe}" )
+                            RecipeCard(
+                                recipe = recipe,
+                                onHeartClick = { viewModel.toggleFavorite(recipe.id, !recipe.isFavorite) },
+                                isFavorite = recipe.isFavorite,
+                                onClick = {
+                                    // Naviguer vers la page de détails de la recette
+                                    navController.navigate("recipeDetails/${recipe.id}")
+                                }
+                            )
+                        }
                     }
                 }
             }
-        }
-        is RecipeState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+            is RecipeState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
-        }
-        is RecipeState.Error -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Error: ${state.message}")
+            is RecipeState.Error -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = "Error: ${state.message}")
+                }
             }
         }
     }
