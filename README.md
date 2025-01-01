@@ -34,3 +34,5 @@ GourmetGlobe a été conçu pour les passionnés de cuisine et les curieux de d�
 
 
 ## API Spoonacular
+
+*Lien vers le site Spoonacular : https://spoonacular.com/food-api*
