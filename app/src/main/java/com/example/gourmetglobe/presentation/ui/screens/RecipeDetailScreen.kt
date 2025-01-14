@@ -2,16 +2,31 @@ package com.example.gourmetglobe.presentation.ui.screens
 
 import android.text.Spanned
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -38,7 +53,7 @@ fun RecipeDetailScreen(
 
     when (val state = recipeDetailsState) {
         is RecipeDetailsState.Success -> {
-            RecipeDetailsContent(recipe = state.recipe, navController = navController)
+            RecipeDetailsContentWithAnimatedImage(recipe = state.recipe, navController = navController)
         }
 
         is RecipeDetailsState.Loading -> {
@@ -52,69 +67,108 @@ fun RecipeDetailScreen(
         }
     }
 }
-
 @Composable
-fun RecipeDetailsContent(recipe: RecipeEntity, navController: NavController) {
+fun RecipeDetailsContentWithAnimatedImage(
+    recipe: RecipeEntity,
+    navController: NavController,
+    maxImageHeight: Dp = 300.dp,
+    minImageHeight: Dp = 100.dp
+) {
+    // ScrollState pour détecter le défilement
+    val scrollState = rememberScrollState()
+    val image: Painter = rememberAsyncImagePainter(model = recipe.image)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
     ) {
-        // Affichage de l'image principale
-        Image(
-            painter = rememberAsyncImagePainter(model = recipe.image),
-            contentDescription = recipe.title,
+        // Image en arrière-plan
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp)
-        )
-
-        // Titre de la recette
-        Text(
-            text = recipe.title,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        // Description enrichie
-        HtmlText(
-            html = recipe.summary ?: "Aucune description disponible",
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-
-        // Informations supplémentaires
-        Column(modifier = Modifier.padding(16.dp)) {
-            BulletListSection(
-                title = "Allergènes",
-                items = recipe.intolerances
-            )
-            BulletListSection(
-                title = "Ingrédients",
-                items = recipe.ingredients
-            )
-            BulletListSection(
-                title = "Ustensiles",
-                items = recipe.equipment
-            )
-            DetailSection(title = "Temps de préparation", value = "${recipe.readyInMinutes} minutes")
-            DetailSection(title = "Type de plat", value = recipe.dishTypes.joinToString(", ") ?: "Inconnu")
-            DetailSection(title = "Régimes alimentaires", value = recipe.diets.joinToString(", ") ?: "Aucun")
-        }
-
-        // Bouton de retour
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .height(350.dp)
         ) {
-            Text("Retour")
+            // L'image en arrière-plan
+            Image(
+                painter = rememberAsyncImagePainter(model = recipe.image),
+                contentDescription = recipe.title,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = androidx.compose.ui.layout.ContentScale.Crop
+            )
+
+
         }
+
+        Box (modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .offset { IntOffset(0, -scrollState.value / 2) } // Effet parallax pour le texte et la box
+            .background(Color.White, shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
+            .padding(20.dp)){ // Titre de la recette
+            Text(
+                text = recipe.title,
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.Black
+            )
+        }
+
+        // Box avec le texte qui défile
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(16.dp)
+                .offset { IntOffset(0, -scrollState.value / 2) } // Effet parallax pour le texte et la box
+                .background(Color.White, shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
+                .padding(20.dp)
+        ) {
+            Column (
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Description enrichie
+                HtmlText(
+                    html = recipe.summary ?: "Aucune description disponible",
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            // Informations supplémentaires
+
+                BulletListSection(
+                    title = "Allergènes",
+                    items = recipe.intolerances
+                )
+                BulletListSection(
+                    title = "Ingrédients",
+                    items = recipe.ingredients
+                )
+                BulletListSection(
+                    title = "Ustensiles",
+                    items = recipe.equipment
+                )
+                DetailSection(title = "Temps de préparation", value = "${recipe.readyInMinutes} minutes")
+                DetailSection(title = "Type de plat", value = recipe.dishTypes.joinToString(", ") ?: "Inconnu")
+                DetailSection(title = "Régimes alimentaires", value = recipe.diets.joinToString(", ") ?: "Aucun")
+            }
+
+        }
+//        // Bouton de retour
+//        Spacer(modifier = Modifier.height(16.dp))
+//        Button(
+//            onClick = { navController.popBackStack() },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(horizontal = 16.dp)
+//        ) {
+//            Text("Retour")
+//        }
     }
 }
+
+
+
 
 // Composant pour afficher une liste à puces
 @Composable
@@ -176,7 +230,7 @@ fun HtmlText(html: String, modifier: Modifier = Modifier) {
     Text(
         text = parsedHtml,
         style = MaterialTheme.typography.bodyMedium,
-        textAlign = TextAlign.Start,
+        textAlign = TextAlign.Justify,
         modifier = modifier
     )
 }

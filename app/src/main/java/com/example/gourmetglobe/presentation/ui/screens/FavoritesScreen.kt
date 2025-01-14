@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -28,14 +29,19 @@ fun FavoritesScreen(
 ) {
     val viewModel: RecipeViewModel = viewModel(factory = RecipeViewModelFactory(recipeRepository))
     val recipeState by viewModel.recipeState.collectAsState()
+    val configuration = LocalConfiguration.current
 
     // Charger les recettes favorites dès le démarrage
     LaunchedEffect(Unit) {
         viewModel.getFavoriteRecipes()
     }
-
+    // Déterminer l'orientation actuelle
+    val isLandscape = remember(configuration.orientation) {
+        configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
     FavoritesScreenContent(
         recipeState = recipeState,
+        isLandscape = isLandscape,
         onHeartClick = { recipeId, isFavorite -> viewModel.toggleFavorite(recipeId, isFavorite) },
         onRecipeClick = { recipeId -> navController.navigate("recipeDetails/$recipeId") }
     )
@@ -44,11 +50,10 @@ fun FavoritesScreen(
 @Composable
 fun FavoritesScreenContent(
     recipeState: RecipeState,
+    isLandscape: Boolean,
     onHeartClick: (Int, Boolean) -> Unit,
     onRecipeClick: (Int) -> Unit
 ) {
-    // Détection de l'orientation
-    val isLandscape = isLandscape()
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (recipeState) {
@@ -137,8 +142,3 @@ fun MosaicRecipes(
     }
 }
 
-@Composable
-fun isLandscape(): Boolean {
-    val orientation = LocalConfiguration.current.orientation
-    return orientation == Configuration.ORIENTATION_LANDSCAPE
-}
