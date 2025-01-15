@@ -1,6 +1,7 @@
 package com.example.gourmetglobe.presentation.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -100,6 +101,7 @@ fun SearchScreen(recipeRepository: RecipeRepository, navController: NavControlle
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchField(query: MutableState<String>) {
     OutlinedTextField(
@@ -115,6 +117,14 @@ fun SearchField(query: MutableState<String>) {
             onSearch = {
                 // Recherche à la soumission du clavier
             }
+        ),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+        focusedBorderColor = MaterialTheme.colorScheme.secondary, // Couleur de bordure lorsqu'il est focus
+        unfocusedBorderColor = MaterialTheme.colorScheme.secondary, // Couleur de bordure au repos
+        cursorColor = MaterialTheme.colorScheme.secondary, // Couleur du curseur
+            focusedTextColor = MaterialTheme.colorScheme.secondary
         )
     )
 }
+
+

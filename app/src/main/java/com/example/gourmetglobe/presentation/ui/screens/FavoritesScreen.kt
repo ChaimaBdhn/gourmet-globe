@@ -39,6 +39,8 @@ fun FavoritesScreen(
     val isLandscape = remember(configuration.orientation) {
         configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
+
+
     FavoritesScreenContent(
         recipeState = recipeState,
         isLandscape = isLandscape,
@@ -141,4 +143,3 @@ fun MosaicRecipes(
         }
     }
 }
-

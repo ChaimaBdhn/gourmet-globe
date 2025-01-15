@@ -2,28 +2,20 @@ package com.example.gourmetglobe.presentation.ui.screens
 
 import android.text.Spanned
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -86,14 +78,21 @@ fun RecipeDetailsContentWithAnimatedImage(
         // Image en arrière-plan
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(350.dp)
+                .width(400.dp)
+                .height(260.dp)
+                .background(Color.White, shape = RoundedCornerShape(16.dp)) // Bord arrondi pour la Box
+                .clip(RoundedCornerShape(16.dp))
+                .padding(16.dp)
+                .align(Alignment.CenterHorizontally)
         ) {
             // L'image en arrière-plan
             Image(
                 painter = rememberAsyncImagePainter(model = recipe.image),
                 contentDescription = recipe.title,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .width(400.dp)
+                    .height(260.dp)
+                    .clip(RoundedCornerShape(16.dp)),
                 contentScale = androidx.compose.ui.layout.ContentScale.Crop
             )
 
@@ -105,11 +104,17 @@ fun RecipeDetailsContentWithAnimatedImage(
             .padding(16.dp)
             .offset { IntOffset(0, -scrollState.value / 2) } // Effet parallax pour le texte et la box
             .background(Color.White, shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
-            .padding(20.dp)){ // Titre de la recette
+            .padding(20.dp))
+
+
+        { // Titre de la recette
             Text(
                 text = recipe.title,
-                style = MaterialTheme.typography.headlineSmall,
-                color = Color.Black
+                style = MaterialTheme.typography.headlineSmall .copy(
+                    fontWeight = FontWeight.Bold  // Applique le style gras
+                ),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
 
@@ -137,20 +142,20 @@ fun RecipeDetailsContentWithAnimatedImage(
             // Informations supplémentaires
 
                 BulletListSection(
-                    title = "Allergènes",
+                    title = "Intolerances",
                     items = recipe.intolerances
                 )
                 BulletListSection(
-                    title = "Ingrédients",
+                    title = "Ingredients",
                     items = recipe.ingredients
                 )
                 BulletListSection(
-                    title = "Ustensiles",
+                    title = "Equipments",
                     items = recipe.equipment
                 )
-                DetailSection(title = "Temps de préparation", value = "${recipe.readyInMinutes} minutes")
-                DetailSection(title = "Type de plat", value = recipe.dishTypes.joinToString(", ") ?: "Inconnu")
-                DetailSection(title = "Régimes alimentaires", value = recipe.diets.joinToString(", ") ?: "Aucun")
+                DetailSection(title = "Preparation time", value = "${recipe.readyInMinutes} minutes")
+                DetailSection(title = "Dish type(s)", value = recipe.dishTypes.joinToString(", ") ?: "Inconnu")
+                DetailSection(title = "Diets", value = recipe.diets.joinToString(", ") ?: "Aucun")
             }
 
         }
@@ -183,7 +188,7 @@ fun BulletListSection(title: String, items: List<String>) {
         // Vérification et affichage de la liste ou du message de fallback
         if (items.isEmpty()) {
             Text(
-                text = "Aucune information disponible",
+                text = "No information available",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -209,17 +214,33 @@ fun BulletListSection(title: String, items: List<String>) {
 // Composant pour afficher un détail simple (titre + valeur)
 @Composable
 fun DetailSection(title: String, value: String) {
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+    if(value.isBlank()){
+        Column(modifier = Modifier.padding(vertical = 8.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "No information available",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+    else{
+        Column(modifier = Modifier.padding(vertical = 8.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }
 
@@ -250,8 +271,10 @@ fun ErrorContent(message: String, navController: NavController) {
             Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = { navController.popBackStack() }) {
-                Text("Retour")
+                Text("Back")
             }
         }
     }
 }
+
+
