@@ -1,58 +1,63 @@
 package com.example.gourmetglobe.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+// Thème clair
+val LightColors = lightColorScheme(
+    primary = pummpink,
+    onPrimary = cosmiclate,
+    secondary = olive,
+    onSecondary = davygray,
+    background = cosmiclate,
+    onBackground = davygray,
+    surface = silver,
+    onSurface = davygray,
+    error = lightred,
+    onError = cosmiclate
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+// Thème sombre
+val DarkColors = darkColorScheme(
+    primary = pummpink,
+    onPrimary = davygray,
+    secondary = olive,
+    onSecondary = cosmiclate,
+    background = davygray,
+    onBackground = cosmiclate,
+    surface = davygray,
+    onSurface = silver,
+    error = lightred,
+    onError = cosmiclate
 )
 
 @Composable
 fun GourmetGlobeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    val colors = if (darkTheme) {
+        DarkColors
+    } else {
+        LightColors
     }
 
+    val shapes = Shapes(
+        small = RoundedCornerShape(4.dp),
+        medium = RoundedCornerShape(8.dp),
+        large = RoundedCornerShape(16.dp)
+    )
     MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
+        colorScheme = colors,
+        typography = Typography, // Ajouter si vous personnalisez la typographie
+        shapes = shapes, // Ajouter si vous personnalisez les formes
         content = content
     )
 }
