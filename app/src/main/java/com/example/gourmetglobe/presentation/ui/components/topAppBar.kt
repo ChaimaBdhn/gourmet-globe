@@ -8,6 +8,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.navigation.compose.rememberNavController
 
+/**
+ * Affiche la barre supérieure avec un titre et un bouton retour 
+ * @param navController contrôleur de navigation 
+ * @param title texte affiché dans la barre 
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(navController: NavController, title: String) {
@@ -28,16 +33,3 @@ fun TopBar(navController: NavController, title: String) {
         )
     )
 }
-
-@Preview
-@Composable
-fun TopBarPreview() {
-    // Ajouter un exemple d'usage dans une vue d'aperçu
-    TopBar(navController = rememberNavController(), title = "My Screen")
-}
-
-
-
--- 
-OUKAS MOHAMED
-M1 Cloud computing & Cybersecurity
