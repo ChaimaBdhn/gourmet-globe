@@ -20,7 +20,12 @@ fun TopBar(navController: NavController, title: String) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                 }
             }
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary, // Couleur de l'arrière-plan
+            navigationIconContentColor = MaterialTheme.colorScheme.secondary, // Couleur de l'icône de navigation
+            titleContentColor = MaterialTheme.colorScheme.secondary // Couleur du titre
+        )
     )
 }
 
@@ -30,3 +35,9 @@ fun TopBarPreview() {
     // Ajouter un exemple d'usage dans une vue d'aperçu
     TopBar(navController = rememberNavController(), title = "My Screen")
 }
+
+
+
+-- 
+OUKAS MOHAMED
+M1 Cloud computing & Cybersecurity

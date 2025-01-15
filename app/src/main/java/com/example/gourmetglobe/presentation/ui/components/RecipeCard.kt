@@ -7,10 +7,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -25,25 +27,37 @@ fun RecipeCard(
     isFavorite: Boolean, // Détermine si cette recette est déjà en favoris
     onClick: ()-> Unit
 ) {
-    Card(
+    Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable(){onClick()},
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
+            .fillMaxSize()
     ) {
-        Column {
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+                .clickable { onClick() },
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White, // Couleur de fond de la Card
+                contentColor = MaterialTheme.colorScheme.onSurface // Couleur du contenu (texte, icônes)
+            )
+        ) {
             // Image avec le bouton favori
-            Box  {
+            Box {
+
                 // Image principale
                 Image(
                     painter = rememberAsyncImagePainter(model = recipe.image),
                     contentDescription = recipe.title,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
+                        .width(400.dp) // Prend toute la largeur disponible
+                        .height(200.dp) // Hauteur de l'image
+                        // .align(Alignment.Center) // Centrer l'image dans la Box
+                        .padding(10.dp)
                 )
+
                 // Bouton favori
                 IconButton(
                     onClick = { onHeartClick(recipe) },
@@ -66,7 +80,7 @@ fun RecipeCard(
 
 
             // Informations sur la recette
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(10.dp).align(Alignment.CenterHorizontally)) {
                 Text(
                     text = recipe.title ?: "Titre indisponible",
                     style = MaterialTheme.typography.titleMedium,
@@ -82,3 +96,5 @@ fun RecipeCard(
         }
     }
 }
+
+

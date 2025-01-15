@@ -22,7 +22,10 @@ fun BottomNavigationBar(navController: NavController) {
     val currentRoute = currentBackStackEntry.value?.destination?.route
 
     // Affichage de la barre de navigation avec les éléments
-    NavigationBar {
+    NavigationBar (
+        containerColor = MaterialTheme.colorScheme.background, // Couleur d'arrière-plan de la barre
+        contentColor = MaterialTheme.colorScheme.secondary
+    ) {
         items.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(imageVector = item.icon, contentDescription = item.label) },
@@ -49,3 +52,5 @@ data class NavigationItem(
     val label: String,  // Le label de l'élément (nom affiché)
     val icon: ImageVector // L'icône associée à l'élément
 )
+
+
