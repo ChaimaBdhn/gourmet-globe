@@ -20,6 +20,13 @@ import com.example.gourmetglobe.presentation.ui.state.RecipeState
 import com.example.gourmetglobe.presentation.viewmodel.RecipeViewModel
 import com.example.gourmetglobe.presentation.viewmodel.RecipeViewModelFactory
 
+
+/**
+ * Fonction composable qui représente l'écran d'accueil de l'application.
+ * Elle affiche toutes les recettes disponibles.
+ * @param recipeRepository Le [RecipeRepository] contient les données des recettes.
+ * @param navController Le [NavController] qui gère la navigation vers l'écran de détails d'une recette.
+ */
 @Composable
 fun HomeScreen(recipeRepository: RecipeRepository, navController: NavController) {
     val viewModel: RecipeViewModel = viewModel(factory = RecipeViewModelFactory(recipeRepository))
@@ -31,9 +38,10 @@ fun HomeScreen(recipeRepository: RecipeRepository, navController: NavController)
         configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
+
     // Charger les recettes au démarrage
     LaunchedEffect(Unit) {
-        viewModel.getAllRecipes()
+        viewModel.initApp()
     }
 
     Scaffold(
@@ -52,6 +60,16 @@ fun HomeScreen(recipeRepository: RecipeRepository, navController: NavController)
     )
 }
 
+
+/**
+ * Fonction composable qui gére l'affichage du contenu de la page.
+ * Elle affiche toutes les recettes disponibles sous forme de cards en prenant en compte l'orientation de l'écran.
+ * @param recipeState L'état des recettes qui peut être en chargement, réussi ou en erreur.
+ * @param isLandscape Boolean qui détermine si l'orientation est en paysage ou en portrait.
+ * @param onHeartClick Callback appelé lorsque l'utilisateur clique sur le bouton de favoris d'une recette.
+ * @param onRecipeClick Callback appelé lorsque l'utilisateur clique sur une recette pour voir ses détails.
+ * @param paddingValues Valeurs de padding pour s'assurer que l'interface respecte les marges d'écran par rapport à la topAppBar.
+ */
 @Composable
 fun HomeScreenContent(
     recipeState: RecipeState,
@@ -68,7 +86,7 @@ fun HomeScreenContent(
         }
         is RecipeState.Error -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Error: ${(recipeState as RecipeState.Error).message}")
+                Text(text = "Error: ${(recipeState as RecipeState.Error).message}", modifier = Modifier.padding(8.dp))
             }
         }
         is RecipeState.Success -> {
@@ -89,7 +107,9 @@ fun HomeScreenContent(
                                 recipe = recipe,
                                 onHeartClick =  { onHeartClick(recipe.id, !recipe.isFavorite) },
                                 isFavorite = recipe.isFavorite,
-                                onClick = { onRecipeClick(recipe.id) }
+                                onClick = { onRecipeClick(recipe.id)},
+                                isLandscape=isLandscape
+
                             )
                         }
                     }
@@ -106,7 +126,8 @@ fun HomeScreenContent(
                                 recipe = recipe,
                                 onHeartClick = { onHeartClick(recipe.id, !recipe.isFavorite) },
                                 isFavorite = recipe.isFavorite,
-                                onClick = { onRecipeClick(recipe.id) }
+                                onClick = { onRecipeClick(recipe.id) },
+                                isLandscape=isLandscape
                             )
                         }
                     }

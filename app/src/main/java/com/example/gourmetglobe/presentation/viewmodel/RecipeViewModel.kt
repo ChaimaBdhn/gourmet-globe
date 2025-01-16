@@ -25,6 +25,11 @@ class RecipeViewModel(
     private val _recipeState = MutableStateFlow<RecipeState>(RecipeState.Loading)
     val recipeState: StateFlow<RecipeState> get() = _recipeState
 
+    /*
+      * variable d'initialisation à true pour réaliser un première appel d'api au 1er démarrage de l'application
+      * puis est à false tout le temps
+    */
+    private var _init_room = true
 
 
     /**
@@ -63,31 +68,31 @@ class RecipeViewModel(
                     ingredients, minCalories, maxCalories, maxReadyTime
                 )
                     .onStart {
-                        Log.d("SearchRecipes", "Recherche commencée avec les critères : titre=$title, cuisine=$cuisine, diet=$diet, dishType=$dishType, intolerances=$intolerances, equipment=$equipment, ingredients=$ingredients, minCalories=$minCalories, maxCalories=$maxCalories, maxReadyTime=$maxReadyTime")
+                        Log.d("SearchRecipes", "Search started with criteria : titre=$title, cuisine=$cuisine, diet=$diet, dishType=$dishType, intolerances=$intolerances, equipment=$equipment, ingredients=$ingredients, minCalories=$minCalories, maxCalories=$maxCalories, maxReadyTime=$maxReadyTime")
                     }
 
                     .catch { e ->
 
-                        Log.e("SearchRecipes", "Erreur lors de la recherche : ${e.message}", e)
-                        _recipeState.value = RecipeState.Error("Erreur lors de la recherche : ${e.message}")
+                        Log.e("SearchRecipes", "Search error: ${e.message}", e)
+                        _recipeState.value = RecipeState.Error("Search error : ${e.message}")
                     }
 
                     .collect { recipeEntities ->
                         if (recipeEntities.isEmpty()) {
 
-                            Log.w("SearchRecipes", "Aucune recette trouvée avec les critères fournis.")
-                            _recipeState.value = RecipeState.Error("Aucune recette trouvée.")
+                            Log.w("SearchRecipes", "No recipes found using the criteria provided.")
+                            _recipeState.value = RecipeState.Error("No recipes found.")
 
                         } else {
-                            Log.d("SearchRecipes", "Recettes récupérées avec succès : ${recipeEntities.size} recettes.")
+                            Log.d("SearchRecipes", "Successfully recovered recipes : ${recipeEntities.size} recettes.")
                             // Convertir les entités récupérées en modèles métier (si nécessaire)
                             _recipeState.value = RecipeState.Success(recipeEntities)
                         }
                     }
             } catch (e: Exception) {
                 // Gérer les exceptions générales
-                Log.e("SearchRecipes", "Exception inattendue : ${e.message}", e)
-                _recipeState.value = RecipeState.Error("Erreur inattendue : ${e.message}")
+                Log.e("SearchRecipes", "Unexpected error : ${e.message}", e)
+                _recipeState.value = RecipeState.Error("Unexpected error : ${e.message}")
             }
         }
     }
@@ -125,7 +130,6 @@ class RecipeViewModel(
                 // Met à jour dans l'état local (Immutable List Copy)
                 val currentState = _recipeState.value
                 if (currentState is RecipeState.Success) {
-                    Log.d("toggleFavorite", "Je suis dedans")
 
                     val updatedRecipes = currentState.recipes.map { recipe ->
                         if (recipe.id == recipeId) recipe.copy(isFavorite = isFavorite) else recipe
@@ -133,7 +137,7 @@ class RecipeViewModel(
                     _recipeState.value = RecipeState.Success(updatedRecipes)
                 }
             } catch (e: Exception) {
-                Log.e("toggleFavorite", "Erreur lors de la mise à jour du favori : ${e.message}", e)
+                Log.e("toggleFavorite", "Favourite update error : ${e.message}", e)
             }
         }
     }
@@ -156,6 +160,53 @@ class RecipeViewModel(
      */
     fun getAllRecipes(){
         refreshRecipes()
+    }
+
+
+    fun initApp(){
+        if (_init_room){
+            viewModelScope.launch {
+                // Passer à l'état de chargement
+                _recipeState.value = RecipeState.Loading
+
+                try {
+                    recipeRepository.searchRecipes(
+                        null, "Italian", null, null, null, null,
+                        null, null, null, null
+                    )
+                        .onStart {
+                            Log.d("Initialisation", "Initialisation with   cuisine=Italian")
+                        }
+
+                        .catch { e ->
+
+                            Log.e("Initialisation", "Search error: ${e.message}", e)
+                            _recipeState.value = RecipeState.Error("Search error : ${e.message}")
+                        }
+
+                        .collect { recipeEntities ->
+                            if (recipeEntities.isEmpty()) {
+
+                                Log.w("Initialisation", "No recipes found using the criteria 'Italian' provided.")
+                                _recipeState.value = RecipeState.Error("No recipes found. This is probably due to the daily quota of requests on the api being exceeded.")
+
+                            } else {
+                                Log.d("Initialisation", "Successfully recovered recipes : ${recipeEntities.size} recettes.")
+                                // Convertir les entités récupérées en modèles métier (si nécessaire)
+                                _recipeState.value = RecipeState.Success(recipeEntities)
+                            }
+                        }
+                } catch (e: Exception) {
+                    // Gérer les exceptions générales
+                    Log.e("Initialisation", "Unexpected error : ${e.message}", e)
+                    _recipeState.value = RecipeState.Error("Unexpected error : ${e.message}")
+                }
+            }
+            _init_room=false
+        }
+        else {
+            getAllRecipes()
+        }
     }
 
 }
