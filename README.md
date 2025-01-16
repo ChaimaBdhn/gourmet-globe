@@ -26,11 +26,29 @@ GourmetGlobe a été conçu pour les passionnés de cuisine et les curieux de d�
 
 ## Technologies utilisées
 
-## Installation
+- Kotlin
+- Android SDK 
+- Retrofit Moshi 
+- Coroutines 
+- Room Database 
+- Material Design Components
+- API Spoonacular 
+- Gradle
 
 
+## Utilisation
 
-## Utilisation 
+Le fichier APK **gourmetglobe.apk** de l'application est accessible depuis le répertoire **app/release/**
 
 
 ## API Spoonacular
+
+Lien vers le site :  
+
+*https://spoonacular.com/food-api*
+
+
+La documentation de l'API est disponible ici :  
+
+*https://spoonacular.com/food-api/docs*
+
