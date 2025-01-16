@@ -67,7 +67,7 @@ class RecipeRepositoryImpl(
                     minCalories = minCalories,
                     maxCalories = maxCalories,
                     maxReadyTime = maxReadyTime,
-                    apiKey = "dfb061e309024285862277fff5f1028a"
+                    apiKey = "b859eab2cceb402f980831a792ad4380"
                 ).results
                 Log.d("SearchRecipes", "${apiResults}")
 
@@ -86,6 +86,7 @@ class RecipeRepositoryImpl(
                 // Émettre les résultats de l'API
 
                 emit(apiRecipeEntities)
+
             } catch (e: Exception) {
                 // Étape 3 : Récupérer les résultats depuis la base locale en cas d'erreur
                 val localResults = recipeDao.getRecipesByFilters(
@@ -150,7 +151,7 @@ class RecipeRepositoryImpl(
         return try {
 
             val localRecipe = recipeDao.getRecipeByIdSync(id)
-            val details = api.getRecipeDetails(id, "dfb061e309024285862277fff5f1028a").toEntity()
+                val details = api.getRecipeDetails(id, "b859eab2cceb402f980831a792ad4380").toEntity()
                 .mergeFavorites(localRecipe)
 
             recipeDao.updateRecipe(details)
