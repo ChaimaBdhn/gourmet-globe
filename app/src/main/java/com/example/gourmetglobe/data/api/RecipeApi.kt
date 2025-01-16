@@ -1,10 +1,16 @@
 package com.example.gourmetglobe.data.api
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+
+/**
+ * Interface RecipeApi pour les appels sur l'API relatifs aux recettes.
+ * On fait 2 appels API : une pour la recherche, une pour récuperer les détails des recettes
+ * Utilise Retrofit pour interagir avec l'API de recettes.
+ */
 interface RecipeApi {
+
     @GET("recipes/complexSearch")
     suspend fun searchRecipes(
         @Query("query") title: String? = null, // Titre de la recette

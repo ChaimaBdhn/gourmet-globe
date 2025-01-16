@@ -3,6 +3,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.gourmetglobe.domain.repository.repository.RecipeRepository
 
+
+/**
+ * une factory pour créer une instance de [RecipeViewModel].
+ *
+ * @property repository Instance de [RecipeRepository] utilisée par le ViewModel.
+ */
 class RecipeViewModelFactory(
     private val repository: RecipeRepository
 ) : ViewModelProvider.Factory {

@@ -11,6 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 
+
+/**
+ * ViewModel pour gérer la logique métier liée aux recettes.
+ *
+ * @property recipeRepository "la room" utilisé pour interagir avec les données des recettes.
+ */
 class RecipeViewModel(
     private val recipeRepository: RecipeRepository
 ) : ViewModel() {
@@ -19,6 +25,22 @@ class RecipeViewModel(
     private val _recipeState = MutableStateFlow<RecipeState>(RecipeState.Loading)
     val recipeState: StateFlow<RecipeState> get() = _recipeState
 
+
+
+    /**
+     * Recherche des recettes en fonction des critères spécifiés.
+     * (Seul le titre est pris en compte dans cette version)
+     * @param title Titre de la recette.
+     * @param cuisine Type de cuisine (italienne, française, etc.).
+     * @param diet Régimes alimentaires (végétalien, végétarien, etc.).
+     * @param dishType Type de plat (entrée, dessert, etc.).
+     * @param intolerances Intolérances alimentaires (gluten, lactose, etc.).
+     * @param equipment Équipements nécessaires pour la recette.
+     * @param ingredients Ingrédients requis pour la recette.
+     * @param minCalories Nombre minimum de calories.
+     * @param maxCalories Nombre maximum de calories.
+     * @param maxReadyTime Temps de préparation maximal.
+     */
     fun searchRecipes(
         title: String?,
         cuisine: String?,
@@ -70,8 +92,9 @@ class RecipeViewModel(
         }
     }
 
-
-    // Fonction pour récupérer les recettes favorites
+    /**
+     *  Fonction pour récupérer les recettes favorites
+     */
     fun getFavoriteRecipes() {
         viewModelScope.launch {
             try {
@@ -87,13 +110,12 @@ class RecipeViewModel(
         }
     }
 
-    //    // Fonction pour changer le statut "favorite" d'une recette
-//    fun toggleFavorite(recipeId: Int, isFavorite: Boolean) {
-//        viewModelScope.launch {
-//            Log.d("test", "ID : ${recipeId} Favorite: ${isFavorite}")
-//            recipeRepository.toggleFavorite(recipeId, isFavorite)
-//        }
-//    }
+    /**
+     * Met à jour l'état d'une recette favorite (ajout ou suppression).
+     *
+     * @param recipeId Identifiant de la recette.
+     * @param isFavorite Nouvel état de favori.
+     */
     fun toggleFavorite(recipeId: Int, isFavorite: Boolean) {
         viewModelScope.launch {
             try {
@@ -103,6 +125,8 @@ class RecipeViewModel(
                 // Met à jour dans l'état local (Immutable List Copy)
                 val currentState = _recipeState.value
                 if (currentState is RecipeState.Success) {
+                    Log.d("toggleFavorite", "Je suis dedans")
+
                     val updatedRecipes = currentState.recipes.map { recipe ->
                         if (recipe.id == recipeId) recipe.copy(isFavorite = isFavorite) else recipe
                     }
@@ -114,6 +138,9 @@ class RecipeViewModel(
         }
     }
 
+    /**
+     * Rafraîchit toutes les recettes disponibles.
+     */
     private fun refreshRecipes() {
         viewModelScope.launch {
             recipeRepository.getAllRecipes()
@@ -124,7 +151,9 @@ class RecipeViewModel(
         }
     }
 
-
+    /**
+     * Récupère toutes les recettes disponibles.
+     */
     fun getAllRecipes(){
         refreshRecipes()
     }

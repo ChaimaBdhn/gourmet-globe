@@ -4,7 +4,11 @@ import com.example.gourmetglobe.data.local.entities.RecipeEntity
 import com.example.gourmetglobe.data.model.Recipe
 import kotlinx.coroutines.flow.Flow
 
-
+/**
+ * Interface représentant avec laquel on pourra faire les requêtes sur notre base de données locale (room) pour les recettes.
+ * Fournit des méthodes pour interagir avec la base de donnée
+ * telles que la recherche, la gestion des favoris et l'accès aux détails des recettes.
+ */
 interface RecipeRepository {
     // Recherche avec Flow (barre de recherche)
     fun searchRecipes(
@@ -29,5 +33,6 @@ interface RecipeRepository {
     // Récupération d'une recette par son ID (hors ligne ou pas)
     suspend fun getRecipeDetails(id: Int): RecipeEntity
 
+    // Récupération de toute les recettes disponible dans la base avec Flow
     fun getAllRecipes(): Flow<List<RecipeEntity>>
 }

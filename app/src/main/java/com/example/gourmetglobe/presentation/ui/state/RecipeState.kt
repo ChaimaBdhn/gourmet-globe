@@ -2,9 +2,27 @@ package com.example.gourmetglobe.presentation.ui.state
 
 import com.example.gourmetglobe.data.local.entities.RecipeEntity
 
-//Sealed Class pour représenter les différents états des recettes
+
+/**
+ * "État scellé" représentant les différents états possibles des recettes.
+ */
 sealed class RecipeState {
-    object Loading : RecipeState() // État de chargement
-    data class Success(val recipes: List<RecipeEntity>) : RecipeState() // État de succès avec les données des recettes
-    data class Error(val message: String) : RecipeState() // État d'erreur avec le message d'erreur
+    /**
+     * État représentant le chargement des recette.
+     */
+    object Loading : RecipeState()
+
+    /**
+    * État représentant un succès dans le chargement des recettes.
+    *
+    * @property recipes la liste d'objets [RecipeEntity] contenant les receettes
+    */
+    data class Success(val recipes: List<RecipeEntity>) : RecipeState()
+
+    /**
+     * État représentant une erreur survenue lors du chargement des recettes.
+     *
+     * @property message Le message d'erreur décrivant le problème.
+     */
+    data class Error(val message: String) : RecipeState()
 }

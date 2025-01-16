@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 val pummpink = Color(0xFFFF8133)
 val cosmiclate = Color(0xFFFFF4E0)
 val lightred= Color(0xFFFF7070)
+val late = Color(0xFFFAF6F3)
 
 val olive = Color(0xFF98BC62)
 val davygray = Color(0xFF4B4B4B)
