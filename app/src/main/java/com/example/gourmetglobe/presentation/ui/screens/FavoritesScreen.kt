@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -22,11 +21,19 @@ import com.example.gourmetglobe.presentation.ui.state.RecipeState
 import com.example.gourmetglobe.presentation.viewmodel.RecipeViewModel
 import com.example.gourmetglobe.presentation.viewmodel.RecipeViewModelFactory
 
+/**
+ * Fonction composable qui gére l'affichage des recettes en favoris
+ * Elle affiche les recettes favorites de l'utilisateur et permet d'interagir avec les recettes (ajouter/retirer des favoris, afficher les détails)
+ *
+ * @param recipeRepository le [RecipeRepository] qui fournit les données des recettes à afficher
+ * @param navController le [NavController] utilisé pour naviguer vers l'écran de détails d'une recette
+  */
 @Composable
 fun FavoritesScreen(
     recipeRepository: RecipeRepository,
     navController: NavController
 ) {
+    // Crée un ViewModel pour gérer l'état des recettes
     val viewModel: RecipeViewModel = viewModel(factory = RecipeViewModelFactory(recipeRepository))
     val recipeState by viewModel.recipeState.collectAsState()
     val configuration = LocalConfiguration.current
@@ -49,6 +56,16 @@ fun FavoritesScreen(
     )
 }
 
+
+/**
+ * Fonction composable qui gère l'affichage du contenu de l'écran des recettes favorites.
+ * Elle choisit la disposition des recettes en fonction de l'orientation de l'écran (liste ou mosaïque) puis les affiches.
+ *
+ * @param recipeState L'état des recettes (chargement, succès ou une erreur).
+ * @param isLandscape Indicateur de l'orientation de l'écran (paysage ou portrait).
+ * @param onHeartClick Callback qui est appelé lorsque l'utilisateur clique sur le bouton de favori (pour le supprimer)
+ * @param onRecipeClick Callback qui est appelé lorsque l'utilisateur clique sur une recette pour y voir les détails.
+ */
 @Composable
 fun FavoritesScreenContent(
     recipeState: RecipeState,
@@ -59,9 +76,11 @@ fun FavoritesScreenContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (recipeState) {
+            // Affiche un indicateur de chargement si les recettes sont en cours de récupération
             is RecipeState.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
+            // Si les recettes sont récupérées avec succès, on affiche selon l'orientation de l'écran
             is RecipeState.Success -> {
                 if (recipeState.recipes.isEmpty()) {
                     Text(
@@ -85,6 +104,7 @@ fun FavoritesScreenContent(
                     }
                 }
             }
+            // Affichage d'un message d'erreur en cas de problème lors de la récupération des recettes
             is RecipeState.Error -> {
                 Text(
                     text = "Error: ${recipeState.message}",
@@ -96,6 +116,14 @@ fun FavoritesScreenContent(
     }
 }
 
+/**
+ * Fonction composable qui affiche les recettes favorites sous forme de liste.
+ * Chaque card contient une recette pour laquel nous pouvons les supprimer des favoris.
+ *
+ * @param recipes La liste des recettes à afficher.
+ * @param onHeartClick Callback qui est appelé lorsque l'utilisateur clique sur le bouton de favori d'une recette.
+ * @param onRecipeClick Callback qui est appelé lorsque l'utilisateur clique sur une recette pour voir les détails.
+ */
 @Composable
 fun ListRecipes(
     recipes: List<RecipeEntity>,
@@ -113,12 +141,24 @@ fun ListRecipes(
                 recipe = recipe,
                 onHeartClick = { onHeartClick(recipe.id, !recipe.isFavorite) },
                 isFavorite = recipe.isFavorite,
-                onClick = { onRecipeClick(recipe.id) }
+                onClick = { onRecipeClick(recipe.id) },
+                isLandscape = false
             )
         }
     }
 }
 
+
+/**
+ * Fonction composable qui affiche les recettes favorites sous forme de mosaique.
+ * (même chose que pour la représentation sous forme de liste)
+ *
+ * Chaque card contient une recette pour laquel nous pouvons les supprimer des favoris.
+ *
+ * @param recipes La liste des recettes à afficher.
+ * @param onHeartClick Callback qui est appelé lorsque l'utilisateur clique sur le bouton de favori d'une recette.
+ * @param onRecipeClick Callback qui est appelé lorsque l'utilisateur clique sur une recette pour voir les détails.
+ */
 @Composable
 fun MosaicRecipes(
     recipes: List<RecipeEntity>,
@@ -138,7 +178,8 @@ fun MosaicRecipes(
                 recipe = recipe,
                 onHeartClick = { onHeartClick(recipe.id, !recipe.isFavorite) },
                 isFavorite = recipe.isFavorite,
-                onClick = { onRecipeClick(recipe.id) }
+                onClick = { onRecipeClick(recipe.id) },
+                isLandscape = true
             )
         }
     }
